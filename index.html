@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Maturidade · CX, CS & Serviços Técnicos</title>
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-cyan: #0ea5e9;
+            --accent-green: #10b981;
+            --border-color: #334155;
+            --border-soft: #1e293b;
+            --danger: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark); color: var(--text-main);
+            line-height: 1.5; padding: 24px;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        header {
+            text-align: center; padding: 32px 20px;
+            border-bottom: 2px solid var(--accent-cyan); margin-bottom: 32px;
+        }
+        header .tag {
+            color: var(--accent-cyan); font-size: 11px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
+        }
+        h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; line-height: 1.2; }
+        .subtitle { font-size: 15px; color: var(--text-muted); max-width: 700px; margin: 0 auto; }
+
+        .intro-box {
+            background: var(--bg-card); border-radius: 12px; padding: 20px 24px;
+            margin-bottom: 28px; border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-cyan);
+        }
+        .intro-box p { font-size: 14px; color: var(--text-main); line-height: 1.6; }
+        .intro-box strong { color: var(--accent-cyan); }
+
+        /* Linha de valor sempre visível */
+        .value-line {
+            background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-main);
+        }
+        .value-line i { font-size: 20px; color: var(--accent-green); flex-shrink: 0; }
+        .value-line strong { color: var(--accent-green); }
+
+        /* Blocos colapsáveis */
+        .collapse-box {
+            background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color);
+            margin-bottom: 12px; overflow: hidden;
+        }
+        .collapse-box summary {
+            padding: 13px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
+            color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;
+            list-style: none; user-select: none;
+        }
+        .collapse-box summary::-webkit-details-marker { display: none; }
+        .collapse-box summary i:first-child { font-size: 16px; }
+        .collapse-box summary .caret { margin-left: auto; transition: transform 0.2s ease; font-size: 14px; }
+        .collapse-box[open] summary .caret { transform: rotate(180deg); }
+        .collapse-content { padding: 0 16px 16px; }
+        .collapse-content p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        /* No DESKTOP: blocos sem cara de clicável (JS mantém abertos) */
+        @media (min-width: 641px) {
+            .collapse-box summary { cursor: default; pointer-events: none; }
+            .collapse-box summary .caret { display: none; }
+        }
+
+        .scale-legend-title { font-size: 12px; margin-bottom: 12px; }
+        .scale-legend-items { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .scale-legend-item { display: flex; align-items: flex-start; gap: 6px; color: var(--text-muted); font-size: 11px; flex: 1; min-width: 140px; }
+        .scale-legend-item .num {
+            background: var(--bg-dark); color: var(--accent-cyan); padding: 2px 7px;
+            border-radius: 3px; font-weight: 700; font-size: 11px; flex-shrink: 0;
+        }
+        .scale-legend-item strong { color: var(--text-main); font-size: 11.5px; }
+        .scale-legend-item .leg-desc { font-size: 10.5px; color: var(--text-muted); }
+
+        .toggle-hint {
+            background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 8px; padding: 12px 16px; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-main);
+        }
+        .toggle-hint i { font-size: 20px; color: var(--accent-cyan); flex-shrink: 0; }
+        .toggle-hint strong { color: var(--accent-cyan); }
+        .toggle-demo {
+            display: inline-flex; width: 28px; height: 16px; background: var(--accent-cyan);
+            border-radius: 16px; position: relative; vertical-align: middle; margin: 0 2px;
+        }
+        .toggle-demo-slider {
+            position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%;
+            top: 2px; right: 2px;
+        }
+
+        .pillars-title {
+            display: flex; align-items: center; gap: 10px; font-size: 18px;
+            font-weight: 700; margin-bottom: 20px; color: var(--accent-green);
+        }
+        .pillars-title i { font-size: 22px; }
+
+        .areas-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 20px; margin-bottom: 32px;
+        }
+        .area-card {
+            background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color);
+            overflow: hidden; transition: opacity 0.3s ease; display: flex; flex-direction: column;
+        }
+        .area-card.disabled { opacity: 0.4; }
+        .area-card.disabled .card-questions { pointer-events: none; }
+        .card-header {
+            padding: 18px 20px 14px; border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, rgba(14, 165, 233, 0.08) 0%, transparent 100%);
+        }
+        .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .card-icon {
+            width: 36px; height: 36px; border-radius: 8px; background: rgba(14, 165, 233, 0.15);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .card-icon i { font-size: 20px; color: var(--accent-cyan); }
+        .card-toggle { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; }
+        .card-toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border-color); border-radius: 24px; transition: 0.3s;
+        }
+        .toggle-slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; border-radius: 50%; transition: 0.3s;
+        }
+        .card-toggle input:checked + .toggle-slider { background-color: var(--accent-cyan); }
+        .card-toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+        .card-title { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+        .card-title h2 { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .card-tag {
+            background: var(--accent-green); color: var(--bg-dark); padding: 2px 8px;
+            border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 1px;
+        }
+        .card-objetivo { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        .card-counter { font-size: 11px; color: var(--text-muted); }
+        .counter-answered { color: var(--accent-cyan); font-weight: 700; }
+        .card-questions { padding: 16px 20px; flex: 1; }
+        .question-mini { padding: 12px 0; border-bottom: 1px solid var(--border-soft); }
+        .question-mini:last-child { border-bottom: none; padding-bottom: 0; }
+        .question-mini:first-child { padding-top: 0; }
+        .question-mini-header { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+        .question-mini-num {
+            background: var(--bg-dark); color: var(--accent-cyan); width: 22px; height: 22px;
+            border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; flex-shrink: 0;
+        }
+        .question-mini-text { font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; }
+        .scale-mini { display: flex; gap: 4px; margin-bottom: 6px; margin-left: 30px; }
+        .scale-mini-option { flex: 1; }
+        .scale-mini-option input[type="radio"] { display: none; }
+        .scale-mini-option label {
+            display: block; padding: 6px 0; background: var(--bg-dark);
+            border: 1.5px solid var(--border-color); border-radius: 4px; cursor: pointer;
+            transition: all 0.15s ease; font-size: 12px; font-weight: 700; text-align: center;
+            color: var(--text-muted);
+        }
+        .scale-mini-option label:hover { border-color: var(--accent-cyan); color: var(--text-main); }
+        .scale-mini-option input:checked + label {
+            border-color: var(--accent-cyan); background: var(--accent-cyan); color: var(--bg-dark);
+        }
+        .obs-mini {
+            width: calc(100% - 30px); margin-left: 30px; padding: 6px 10px; background: var(--bg-dark);
+            border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-main);
+            font-size: 12px; font-family: inherit; resize: vertical; min-height: 26px; line-height: 1.4;
+        }
+        .obs-mini:focus { outline: none; border-color: var(--accent-cyan); }
+        .obs-mini::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+        /* SEÇÃO DE CONTATO */
+        .contact-section {
+            background: var(--bg-card); border-radius: 12px; padding: 28px;
+            margin-bottom: 28px; border: 1px solid var(--border-color);
+            border-top: 4px solid var(--accent-green);
+        }
+        .contact-section h2 {
+            font-size: 18px; margin-bottom: 6px; color: var(--accent-green);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .contact-section .contact-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+        .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+        .contact-col { display: flex; flex-direction: column; gap: 16px; }
+        .contact-col-title {
+            font-size: 13px; font-weight: 700; color: var(--accent-green);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+            display: flex; align-items: center; gap: 8px;
+            padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
+        }
+        .contact-col-title i { font-size: 16px; }
+        .form-group label {
+            display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .form-group label .req { color: var(--danger); margin-left: 2px; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 10px 12px; background: var(--bg-dark);
+            border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main);
+            font-size: 14px; font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-green); }
+        .form-group input.error { border-color: var(--danger); }
+
+        .actions {
+            display: flex; flex-direction: column; gap: 12px; align-items: center;
+            margin-top: 32px; padding: 24px;
+            background: rgba(15, 23, 42, 0.95); border-radius: 12px; border: 1px solid var(--border-color);
+        }
+        .error-msg { color: var(--danger); font-size: 13px; display: none; text-align: center; }
+        .error-msg.show { display: block; }
+        button {
+            padding: 14px 36px; font-size: 15px; font-weight: 700; border: none; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-primary { background: var(--accent-green); color: var(--bg-dark); }
+        .btn-primary:hover { background: #059669; transform: translateY(-2px); }
+        .btn-primary:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; transform: none; }
+
+        /* TELA DE AGRADECIMENTO */
+        #thank-you {
+            display: none; text-align: center; padding: 80px 20px; max-width: 600px; margin: 0 auto;
+        }
+        #thank-you.active { display: block; }
+        #thank-you .icon-circle {
+            width: 90px; height: 90px; border-radius: 50%; background: rgba(16, 185, 129, 0.15);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;
+        }
+        #thank-you .icon-circle i { font-size: 48px; color: var(--accent-green); }
+        #thank-you h1 { font-size: 28px; margin-bottom: 16px; }
+        #thank-you p { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+        #thank-you .linkedin-link {
+            display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px;
+            color: var(--accent-cyan); text-decoration: none; font-size: 14px; font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        #thank-you .linkedin-link:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+
+        #main-form.hidden { display: none; }
+
+        @media (max-width: 1024px) {
+            .areas-grid { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .scale-legend-items { flex-direction: column; }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            header { padding: 20px 8px; margin-bottom: 20px; }
+            h1 { font-size: 24px; }
+            .subtitle { font-size: 13px; }
+            .intro-box { padding: 14px 16px; margin-bottom: 20px; }
+            .intro-box p { font-size: 13px; }
+
+            /* Linha de valor e colapsáveis compactos no mobile */
+            .value-line { font-size: 13px; padding: 10px 14px; }
+            .collapse-box summary { font-size: 13px; padding: 12px 14px; }
+            .scale-legend-item { min-width: 100%; }
+
+            /* Aviso de desativação */
+            .toggle-hint { font-size: 12px; padding: 10px 12px; }
+
+            /* Cards de área */
+            .card-header { padding: 14px 14px 12px; }
+            .card-title h2 { font-size: 15px; }
+            .card-questions { padding: 12px 14px; }
+
+            /* Pergunta e escala — reduz a margem que corta espaço */
+            .question-mini-text { font-size: 13px; }
+            .scale-mini { margin-left: 0; gap: 5px; margin-top: 8px; }
+            .scale-mini-option label { padding: 10px 0; font-size: 14px; }
+            .obs-mini { margin-left: 0; width: 100%; }
+            .question-mini-num { width: 24px; height: 24px; }
+
+            /* Contato */
+            .contact-section { padding: 18px 16px; }
+            .contact-grid { gap: 24px; }
+
+            /* Botão de envio ocupa largura total */
+            .actions { padding: 16px 12px; }
+            button { width: 100%; justify-content: center; padding: 16px; }
+
+            /* Tela de agradecimento */
+            #thank-you { padding: 50px 16px; }
+            #thank-you h1 { font-size: 22px; }
+            #thank-you p { font-size: 15px; }
+
+            /* Pilares título */
+            .pillars-title { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- FORMULÁRIO PRINCIPAL -->
+        <div id="main-form">
+            <header>
+                <div class="tag">DIAGNÓSTICO GRATUITO</div>
+                <h1>Diagnóstico de Maturidade</h1>
+                <p class="subtitle">Descubra o nível de maturidade da sua operação em Experiência do Cliente (CX), Sucesso do Cliente (CS), Suporte/Atendimento e Serviços Técnicos — e onde estão as maiores oportunidades de reduzir custo, reter clientes e aumentar receita da sua empresa.</p>
+            </header>
+
+            <!-- LINHA DE VALOR (sempre visível) -->
+            <div class="value-line">
+                <i class="ph ph-clock"></i>
+                <span>Tempo aproximado: <strong>~8 minutos</strong>.</span>
+            </div>
+
+            <!-- COMO FUNCIONA (colapsável) -->
+            <details class="collapse-box">
+                <summary><i class="ph ph-info"></i> Como funciona <i class="ph ph-caret-down caret"></i></summary>
+                <div class="collapse-content">
+                    <p>Responda as perguntas abaixo com sinceridade — não existe resposta certa ou errada, o objetivo é mapear o momento atual da sua operação. Ao final, deixe seus dados de contato e você receberá uma análise personalizada e gratuita, com recomendações priorizadas por impacto em redução de custo, retenção e aumento de receita.</p>
+                </div>
+            </details>
+
+            <!-- ESCALA (colapsável) -->
+            <details class="collapse-box">
+                <summary><i class="ph ph-ruler"></i> Escala de avaliação (1 a 5) <i class="ph ph-caret-down caret"></i></summary>
+                <div class="collapse-content">
+                    <div class="scale-legend-items">
+                        <div class="scale-legend-item"><span class="num">1</span> <div><strong>Inexistente</strong><br><span class="leg-desc">não existe</span></div></div>
+                        <div class="scale-legend-item"><span class="num">2</span> <div><strong>Informal</strong><br><span class="leg-desc">existe, mas sem processo</span></div></div>
+                        <div class="scale-legend-item"><span class="num">3</span> <div><strong>Básico</strong><br><span class="leg-desc">processo inconsistente</span></div></div>
+                        <div class="scale-legend-item"><span class="num">4</span> <div><strong>Estruturado</strong><br><span class="leg-desc">rodando e acompanhado</span></div></div>
+                        <div class="scale-legend-item"><span class="num">5</span> <div><strong>Otimizado</strong><br><span class="leg-desc">maduro, orientado a dados</span></div></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- AVISO DE DESATIVAÇÃO DE ÁREA -->
+            <div class="toggle-hint">
+                <i class="ph ph-info"></i>
+                <span>Sua empresa não trabalha com alguma dessas áreas? Use o botão <span class="toggle-demo"><span class="toggle-demo-slider"></span></span> no canto direito de cada bloco para <strong>desativá-la</strong>.</span>
+            </div>
+
+            <!-- TÍTULO DOS PILARES -->
+            <div class="pillars-title">
+                <i class="ph ph-clipboard-text"></i>
+                <span>Pilares de Avaliação</span>
+            </div>
+
+            <!-- GRID 2x2 -->
+            <div class="areas-grid">
+
+        <div class="area-card" id="card-cx">
+            <div class="card-header">
+                <div class="card-header-top">
+                    <div class="card-icon">
+                        <i class="ph ph-compass"></i>
+                    </div>
+                    <label class="card-toggle">
+                        <input type="checkbox" id="toggle-cx" checked onchange="toggleArea('cx', this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="card-title">
+                    <h2>Experiência do Cliente (CX)</h2>
+                    
+                </div>
+                <p class="card-objetivo">Visão estratégica da experiência do cliente</p>
+                <div class="card-counter">
+                    <span class="counter-answered" id="counter-cx">0</span>
+                    <span class="counter-total"> / 4 respondidas</span>
+                </div>
+            </div>
+            <div class="card-questions" id="questions-cx">
+                
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">1</span>
+                        <span class="question-mini-text">Existe mapeamento formal da jornada do cliente?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q1" value="1" id="cx-q1-1">
+                                <label for="cx-q1-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q1" value="2" id="cx-q1-2">
+                                <label for="cx-q1-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q1" value="3" id="cx-q1-3">
+                                <label for="cx-q1-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q1" value="4" id="cx-q1-4">
+                                <label for="cx-q1-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q1" value="5" id="cx-q1-5">
+                                <label for="cx-q1-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cx-q1"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">2</span>
+                        <span class="question-mini-text">A empresa coleta feedback estruturado dos clientes (NPS, CSAT, CES)?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q2" value="1" id="cx-q2-1">
+                                <label for="cx-q2-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q2" value="2" id="cx-q2-2">
+                                <label for="cx-q2-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q2" value="3" id="cx-q2-3">
+                                <label for="cx-q2-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q2" value="4" id="cx-q2-4">
+                                <label for="cx-q2-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q2" value="5" id="cx-q2-5">
+                                <label for="cx-q2-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cx-q2"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">3</span>
+                        <span class="question-mini-text">A empresa utiliza dados de experiência do cliente para análise comportamental e tomada de decisões estratégicas?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q3" value="1" id="cx-q3-1">
+                                <label for="cx-q3-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q3" value="2" id="cx-q3-2">
+                                <label for="cx-q3-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q3" value="3" id="cx-q3-3">
+                                <label for="cx-q3-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q3" value="4" id="cx-q3-4">
+                                <label for="cx-q3-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q3" value="5" id="cx-q3-5">
+                                <label for="cx-q3-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cx-q3"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">4</span>
+                        <span class="question-mini-text">Existe um responsável claro pela experiência do cliente na empresa?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q4" value="1" id="cx-q4-1">
+                                <label for="cx-q4-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q4" value="2" id="cx-q4-2">
+                                <label for="cx-q4-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q4" value="3" id="cx-q4-3">
+                                <label for="cx-q4-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q4" value="4" id="cx-q4-4">
+                                <label for="cx-q4-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cx-q4" value="5" id="cx-q4-5">
+                                <label for="cx-q4-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cx-q4"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="area-card" id="card-cs">
+            <div class="card-header">
+                <div class="card-header-top">
+                    <div class="card-icon">
+                        <i class="ph ph-users-three"></i>
+                    </div>
+                    <label class="card-toggle">
+                        <input type="checkbox" id="toggle-cs" checked onchange="toggleArea('cs', this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="card-title">
+                    <h2>Sucesso do Cliente (CS)</h2>
+                    <span class="card-tag">O OURO</span>
+                </div>
+                <p class="card-objetivo">Pós-venda estruturado, retenção e expansão</p>
+                <div class="card-counter">
+                    <span class="counter-answered" id="counter-cs">0</span>
+                    <span class="counter-total"> / 5 respondidas</span>
+                </div>
+            </div>
+            <div class="card-questions" id="questions-cs">
+                
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">1</span>
+                        <span class="question-mini-text">Existe papel/cargo de Customer Success na empresa?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q1" value="1" id="cs-q1-1">
+                                <label for="cs-q1-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q1" value="2" id="cs-q1-2">
+                                <label for="cs-q1-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q1" value="3" id="cs-q1-3">
+                                <label for="cs-q1-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q1" value="4" id="cs-q1-4">
+                                <label for="cs-q1-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q1" value="5" id="cs-q1-5">
+                                <label for="cs-q1-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cs-q1"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">2</span>
+                        <span class="question-mini-text">A empresa faz análise preditiva da base de clientes (ex: health score, engagement score)?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q2" value="1" id="cs-q2-1">
+                                <label for="cs-q2-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q2" value="2" id="cs-q2-2">
+                                <label for="cs-q2-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q2" value="3" id="cs-q2-3">
+                                <label for="cs-q2-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q2" value="4" id="cs-q2-4">
+                                <label for="cs-q2-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q2" value="5" id="cs-q2-5">
+                                <label for="cs-q2-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cs-q2"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">3</span>
+                        <span class="question-mini-text">A empresa mede e acompanha churn (taxa de cancelamento, análise de cohort, motivos de saída)?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q3" value="1" id="cs-q3-1">
+                                <label for="cs-q3-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q3" value="2" id="cs-q3-2">
+                                <label for="cs-q3-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q3" value="3" id="cs-q3-3">
+                                <label for="cs-q3-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q3" value="4" id="cs-q3-4">
+                                <label for="cs-q3-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q3" value="5" id="cs-q3-5">
+                                <label for="cs-q3-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cs-q3"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">4</span>
+                        <span class="question-mini-text">Existe estratégia ativa de expansão (upsell, cross-sell) na base?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q4" value="1" id="cs-q4-1">
+                                <label for="cs-q4-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q4" value="2" id="cs-q4-2">
+                                <label for="cs-q4-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q4" value="3" id="cs-q4-3">
+                                <label for="cs-q4-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q4" value="4" id="cs-q4-4">
+                                <label for="cs-q4-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q4" value="5" id="cs-q4-5">
+                                <label for="cs-q4-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cs-q4"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">5</span>
+                        <span class="question-mini-text">Existe processo formal de onboarding para novos clientes?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q5" value="1" id="cs-q5-1">
+                                <label for="cs-q5-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q5" value="2" id="cs-q5-2">
+                                <label for="cs-q5-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q5" value="3" id="cs-q5-3">
+                                <label for="cs-q5-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q5" value="4" id="cs-q5-4">
+                                <label for="cs-q5-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="cs-q5" value="5" id="cs-q5-5">
+                                <label for="cs-q5-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="cs-q5"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="area-card" id="card-suporte">
+            <div class="card-header">
+                <div class="card-header-top">
+                    <div class="card-icon">
+                        <i class="ph ph-lifebuoy"></i>
+                    </div>
+                    <label class="card-toggle">
+                        <input type="checkbox" id="toggle-suporte" checked onchange="toggleArea('suporte', this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="card-title">
+                    <h2>Suporte / Atendimento</h2>
+                    
+                </div>
+                <p class="card-objetivo">Operação de atendimento reativo e SLAs</p>
+                <div class="card-counter">
+                    <span class="counter-answered" id="counter-suporte">0</span>
+                    <span class="counter-total"> / 4 respondidas</span>
+                </div>
+            </div>
+            <div class="card-questions" id="questions-suporte">
+                
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">1</span>
+                        <span class="question-mini-text">Existe ferramenta de gestão de tickets, com SLAs definidos e monitorados?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q1" value="1" id="suporte-q1-1">
+                                <label for="suporte-q1-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q1" value="2" id="suporte-q1-2">
+                                <label for="suporte-q1-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q1" value="3" id="suporte-q1-3">
+                                <label for="suporte-q1-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q1" value="4" id="suporte-q1-4">
+                                <label for="suporte-q1-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q1" value="5" id="suporte-q1-5">
+                                <label for="suporte-q1-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="suporte-q1"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">2</span>
+                        <span class="question-mini-text">A equipe de suporte tem acesso a métricas operacionais (TME, TMA, FCR, backlog)?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q2" value="1" id="suporte-q2-1">
+                                <label for="suporte-q2-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q2" value="2" id="suporte-q2-2">
+                                <label for="suporte-q2-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q2" value="3" id="suporte-q2-3">
+                                <label for="suporte-q2-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q2" value="4" id="suporte-q2-4">
+                                <label for="suporte-q2-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q2" value="5" id="suporte-q2-5">
+                                <label for="suporte-q2-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="suporte-q2"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">3</span>
+                        <span class="question-mini-text">Existe base de conhecimento estruturada (que possibilite uso futuro de IA com RAG — busca aumentada em documentos)?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q3" value="1" id="suporte-q3-1">
+                                <label for="suporte-q3-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q3" value="2" id="suporte-q3-2">
+                                <label for="suporte-q3-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q3" value="3" id="suporte-q3-3">
+                                <label for="suporte-q3-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q3" value="4" id="suporte-q3-4">
+                                <label for="suporte-q3-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q3" value="5" id="suporte-q3-5">
+                                <label for="suporte-q3-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="suporte-q3"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">4</span>
+                        <span class="question-mini-text">Existe automação ou IA no atendimento? Se sim, qual o formato — conversacional (responde perguntas) ou agêntica (executa ações)?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q4" value="1" id="suporte-q4-1">
+                                <label for="suporte-q4-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q4" value="2" id="suporte-q4-2">
+                                <label for="suporte-q4-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q4" value="3" id="suporte-q4-3">
+                                <label for="suporte-q4-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q4" value="4" id="suporte-q4-4">
+                                <label for="suporte-q4-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="suporte-q4" value="5" id="suporte-q4-5">
+                                <label for="suporte-q4-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="suporte-q4"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="area-card" id="card-servicos">
+            <div class="card-header">
+                <div class="card-header-top">
+                    <div class="card-icon">
+                        <i class="ph ph-wrench"></i>
+                    </div>
+                    <label class="card-toggle">
+                        <input type="checkbox" id="toggle-servicos" checked onchange="toggleArea('servicos', this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="card-title">
+                    <h2>Serviços Técnicos</h2>
+                    
+                </div>
+                <p class="card-objetivo">Serviços profissionais como fonte de receita</p>
+                <div class="card-counter">
+                    <span class="counter-answered" id="counter-servicos">0</span>
+                    <span class="counter-total"> / 3 respondidas</span>
+                </div>
+            </div>
+            <div class="card-questions" id="questions-servicos">
+                
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">1</span>
+                        <span class="question-mini-text">A empresa oferece serviços customizados/profissionais além do core product (ex: customizações, relatórios personalizados, integrações)?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q1" value="1" id="servicos-q1-1">
+                                <label for="servicos-q1-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q1" value="2" id="servicos-q1-2">
+                                <label for="servicos-q1-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q1" value="3" id="servicos-q1-3">
+                                <label for="servicos-q1-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q1" value="4" id="servicos-q1-4">
+                                <label for="servicos-q1-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q1" value="5" id="servicos-q1-5">
+                                <label for="servicos-q1-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="servicos-q1"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">2</span>
+                        <span class="question-mini-text">Existe processo estruturado de precificação, venda, desenvolvimento e entrega para esses serviços?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q2" value="1" id="servicos-q2-1">
+                                <label for="servicos-q2-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q2" value="2" id="servicos-q2-2">
+                                <label for="servicos-q2-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q2" value="3" id="servicos-q2-3">
+                                <label for="servicos-q2-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q2" value="4" id="servicos-q2-4">
+                                <label for="servicos-q2-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q2" value="5" id="servicos-q2-5">
+                                <label for="servicos-q2-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="servicos-q2"></textarea>
+                </div>
+                <div class="question-mini">
+                    <div class="question-mini-header">
+                        <span class="question-mini-num">3</span>
+                        <span class="question-mini-text">Serviços Técnicos opera como fonte de receita recorrente ou como 'favor' para vendas?</span>
+                    </div>
+                    <div class="scale-mini">
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q3" value="1" id="servicos-q3-1">
+                                <label for="servicos-q3-1" title="Inexistente — não existe">1</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q3" value="2" id="servicos-q3-2">
+                                <label for="servicos-q3-2" title="Informal — existe, mas sem processo definido">2</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q3" value="3" id="servicos-q3-3">
+                                <label for="servicos-q3-3" title="Básico — tem processo, mas inconsistente">3</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q3" value="4" id="servicos-q3-4">
+                                <label for="servicos-q3-4" title="Estruturado — processo rodando e acompanhado">4</label>
+                            </div>
+                            <div class="scale-mini-option">
+                                <input type="radio" name="servicos-q3" value="5" id="servicos-q3-5">
+                                <label for="servicos-q3-5" title="Otimizado — maduro, orientado a dados">5</label>
+                            </div>
+                    </div>
+                    <textarea class="obs-mini" placeholder="Observação (opcional)" data-obs="servicos-q3"></textarea>
+                </div>
+            </div>
+        </div>
+            </div>
+
+            <!-- SEÇÃO DE CONTATO -->
+            <div class="contact-section">
+                <h2><i class="ph ph-paper-plane-tilt"></i> Quase lá! Deixe seus dados para receber a análise</h2>
+                <p class="contact-sub">Os campos com <span style="color: var(--danger);">*</span> são obrigatórios para que possamos te enviar o diagnóstico personalizado.</p>
+                <div class="contact-grid">
+                    <div class="contact-col">
+                        <h3 class="contact-col-title"><i class="ph ph-user"></i> Dados do contato</h3>
+                        <div class="form-group">
+                            <label>Nome do respondente <span class="req">*</span></label>
+                            <input type="text" id="ct-nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone / WhatsApp <span class="req">*</span></label>
+                            <input type="tel" id="ct-telefone" placeholder="(44) 99999-9999" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail <span class="req">*</span></label>
+                            <input type="email" id="ct-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>LinkedIn do respondente</label>
+                            <input type="text" id="ct-linkedin" placeholder="linkedin.com/in/seu-perfil">
+                        </div>
+                        <div class="form-group">
+                            <label>Cargo</label>
+                            <input type="text" id="ct-cargo">
+                        </div>
+                    </div>
+                    <div class="contact-col">
+                        <h3 class="contact-col-title"><i class="ph ph-building"></i> Dados da empresa</h3>
+                        <div class="form-group">
+                            <label>Empresa <span class="req">*</span></label>
+                            <input type="text" id="ct-empresa" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Atuação</label>
+                            <select id="ct-atuacao">
+                                <option value="">Selecione...</option>
+                                <option value="TI / Software">TI / Software</option>
+                                <option value="Não Digital (serviços)">Não Digital (serviços)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Base de clientes (quantidade)</label>
+                            <input type="number" id="ct-base">
+                        </div>
+                        <div class="form-group">
+                            <label>Colaboradores que atuam com clientes</label>
+                            <input type="number" id="ct-colab" placeholder="CS, Suporte, Serviços...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AÇÕES -->
+            <div class="actions">
+                <div class="error-msg" id="error-msg"><i class="ph ph-warning"></i> Por favor, preencha os campos obrigatórios (nome, e-mail, telefone e empresa).</div>
+                <button class="btn-primary" id="submit-btn" onclick="submitDiagnostico()">
+                    <i class="ph ph-paper-plane-tilt"></i> Enviar Diagnóstico
+                </button>
+            </div>
+        </div>
+
+        <!-- TELA DE AGRADECIMENTO -->
+        <div id="thank-you">
+            <div class="icon-circle"><i class="ph-fill ph-check-circle"></i></div>
+            <h1>Diagnóstico enviado com sucesso!</h1>
+            <p>Obrigado por dedicar seu tempo. Em breve você receberá uma análise personalizada do nível de maturidade da sua operação.</p>
+            <a href="https://www.linkedin.com/in/thiago-tino-a9811531/" target="_blank" class="linkedin-link">
+                <i class="ph ph-linkedin-logo"></i> Conheça mais no LinkedIn
+            </a>
+        </div>
+    </div>
+
+    <!-- FORMULÁRIO OCULTO PARA BASIN -->
+    <form id="basin-form" action="https://usebasin.com/f/ebd7bfa09189" method="POST" style="display:none;">
+        <input type="hidden" name="empresa" id="basin-empresa">
+        <input type="hidden" name="nome" id="basin-nome">
+        <input type="hidden" name="email" id="basin-email">
+        <input type="hidden" name="telefone" id="basin-telefone">
+        <input type="hidden" name="cargo" id="basin-cargo">
+        <input type="hidden" name="linkedin" id="basin-linkedin">
+        <input type="hidden" name="atuacao" id="basin-atuacao">
+        <input type="hidden" name="base_clientes" id="basin-base">
+        <input type="hidden" name="colaboradores" id="basin-colab">
+        <input type="hidden" name="prompt_analise" id="basin-prompt">
+    </form>
+
+    <script>
+        // Controla blocos colapsáveis: abertos no desktop, fechados no mobile
+        function ajustarColapsaveis() {
+            const isDesktop = window.matchMedia('(min-width: 641px)').matches;
+            document.querySelectorAll('.collapse-box').forEach(box => {
+                box.open = isDesktop;
+            });
+        }
+        ajustarColapsaveis();
+        window.addEventListener('resize', ajustarColapsaveis);
+
+        const areaStates = { cx: true, suporte: true, cs: true, servicos: true };
+        const areasData = [
+                { key: "cx", name: "Experiência do Cliente (CX)", questions: 4 },
+                { key: "suporte", name: "Suporte / Atendimento", questions: 4 },
+                { key: "cs", name: "Sucesso do Cliente (CS)", questions: 5 },
+                { key: "servicos", name: "Serviços Técnicos", questions: 3 },
+            ];
+        const questionsData = {
+                "cx": [
+                    "Existe mapeamento formal da jornada do cliente?",
+                    "A empresa coleta feedback estruturado dos clientes (NPS, CSAT, CES)?",
+                    "A empresa utiliza dados de experiência do cliente para análise comportamental e tomada de decisões estratégicas?",
+                    "Existe um responsável claro pela experiência do cliente na empresa?",
+                ],
+                "suporte": [
+                    "Existe ferramenta de gestão de tickets, com SLAs definidos e monitorados?",
+                    "A equipe de suporte tem acesso a métricas operacionais (TME, TMA, FCR, backlog)?",
+                    "Existe base de conhecimento estruturada (que possibilite uso futuro de IA com RAG — busca aumentada em documentos)?",
+                    "Existe automação ou IA no atendimento? Se sim, qual o formato — conversacional (responde perguntas) ou agêntica (executa ações)?",
+                ],
+                "cs": [
+                    "Existe papel/cargo de Customer Success na empresa?",
+                    "A empresa faz análise preditiva da base de clientes (ex: health score, engagement score)?",
+                    "A empresa mede e acompanha churn (taxa de cancelamento, análise de cohort, motivos de saída)?",
+                    "Existe estratégia ativa de expansão (upsell, cross-sell) na base?",
+                    "Existe processo formal de onboarding para novos clientes?",
+                ],
+                "servicos": [
+                    "A empresa oferece serviços customizados/profissionais além do core product (ex: customizações, relatórios personalizados, integrações)?",
+                    "Existe processo estruturado de precificação, venda, desenvolvimento e entrega para esses serviços?",
+                    "Serviços Técnicos opera como fonte de receita recorrente ou como 'favor' para vendas?",
+                ],
+            };
+
+        function toggleArea(area, checkbox) {
+            areaStates[area] = checkbox.checked;
+            const card = document.getElementById(`card-${area}`);
+            if (checkbox.checked) { card.classList.remove('disabled'); }
+            else { card.classList.add('disabled'); }
+        }
+
+        function updateCounter(areaKey) {
+            const area = areasData.find(a => a.key === areaKey);
+            if (!area) return;
+            let answered = 0;
+            for (let i = 1; i <= area.questions; i++) {
+                if (document.querySelector(`input[name="${areaKey}-q${i}"]:checked`)) answered++;
+            }
+            document.getElementById(`counter-${areaKey}`).textContent = answered;
+        }
+
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                const name = e.target.name;
+                if (name) updateCounter(name.split('-')[0]);
+            }
+        });
+
+        function buildPrompt() {
+            const empresa = document.getElementById('ct-empresa').value || '[NÃO PREENCHIDO]';
+            const nome = document.getElementById('ct-nome').value || '[NÃO PREENCHIDO]';
+            const cargo = document.getElementById('ct-cargo').value || '[NÃO PREENCHIDO]';
+            const atuacao = document.getElementById('ct-atuacao').value || '[NÃO PREENCHIDO]';
+            const base = document.getElementById('ct-base').value || '[NÃO PREENCHIDO]';
+            const colab = document.getElementById('ct-colab').value || '[NÃO PREENCHIDO]';
+
+            const scaleLabels = {1: 'Inexistente', 2: 'Informal', 3: 'Básico', 4: 'Estruturado', 5: 'Otimizado'};
+
+            let prompt = `DIAGNÓSTICO DE MATURIDADE — ${empresa}
+
+=== CONTEXTO ===
+Empresa: ${empresa}
+Respondente: ${nome} (${cargo})
+Atuação: ${atuacao}
+Base de clientes: ${base}
+Colaboradores que atuam com clientes: ${colab}
+
+=== ÁREAS AVALIADAS ===
+${areaStates.cx ? '☑' : '☐'} Experiência do Cliente (CX)${areaStates.cx ? '' : ' (área desmarcada)'}
+${areaStates.suporte ? '☑' : '☐'} Suporte / Atendimento${areaStates.suporte ? '' : ' (área desmarcada)'}
+${areaStates.cs ? '☑' : '☐'} Sucesso do Cliente (CS)${areaStates.cs ? '' : ' (área desmarcada)'}
+${areaStates.servicos ? '☑' : '☐'} Serviços Técnicos${areaStates.servicos ? '' : ' (área desmarcada)'}
+
+=== RESPOSTAS DETALHADAS ===
+
+`;
+            const areaNames = {
+                cx: 'Experiência do Cliente (CX)', suporte: 'Suporte / Atendimento',
+                cs: 'Sucesso do Cliente (CS)', servicos: 'Serviços Técnicos'
+            };
+
+            areasData.forEach(area => {
+                if (areaStates[area.key]) {
+                    prompt += `--- ${areaNames[area.key]} ---\n`;
+                    for (let i = 1; i <= area.questions; i++) {
+                        const qName = `${area.key}-q${i}`;
+                        const selected = document.querySelector(`input[name="${qName}"]:checked`);
+                        const obsField = document.querySelector(`textarea[data-obs="${qName}"]`);
+                        const obs = obsField ? obsField.value.trim() : '';
+                        const qText = questionsData[area.key][i - 1];
+                        if (selected) {
+                            prompt += `${i}. ${qText}\n   Resposta: ${selected.value} (${scaleLabels[selected.value]})`;
+                            if (obs) prompt += `\n   Observação: ${obs}`;
+                            prompt += '\n\n';
+                        } else {
+                            prompt += `${i}. ${qText}\n   Resposta: [NÃO RESPONDIDA]\n\n`;
+                        }
+                    }
+                    prompt += '\n';
+                } else {
+                    prompt += `--- ${areaNames[area.key]} ---\n(Área desmarcada)\n\n`;
+                }
+            });
+
+            prompt += `=== INSTRUÇÕES PARA ANÁLISE ===
+Você é um consultor sênior em CX, CS e Serviços Técnicos. Com base no diagnóstico acima:
+
+1. SCORE DE MATURIDADE POR ÁREA: calcule a média de cada área ativada e classifique o nível geral.
+2. LACUNAS CRÍTICAS PRIORIZADAS: identifique as 3 maiores lacunas, priorizadas por impacto em redução de custo, retenção (churn) e expansão de receita.
+3. AÇÕES PRIORITÁRIAS: liste de 5 a 8 ações concretas em ordem de prioridade, indicando área, interesse principal (CUSTO ou RECEITA), complexidade (Baixa/Média/Alta) e tempo estimado (semanas).
+4. ESTIMATIVA DE IMPACTO POTENCIAL: estime de forma qualitativa (faixas indicativas) o potencial de redução de custo, redução de churn e aumento de receita.
+5. ESCOPO DE PROJETO SUGERIDO: 90 dias em 3 fases (Diagnóstico/Alinhamento semanas 1-2; Estruturação semanas 3-6; Implementação semanas 7-12), com entregas-chave e horas estimadas por fase.
+6. RISCOS E PREMISSAS: 3-5 riscos e premissas.
+7. INVESTIMENTO APROXIMADO: faixa considerando R$ 300/hora, total de horas e modelo de cobrança (projeto fechado vs horas mensais).
+
+IMPORTANTE:
+- Análise para uso interno do consultor — pode ser técnica e direta.
+- Foco nas DECISÕES que o consultor precisa tomar.
+- Considere o porte (colaboradores e base) para calibrar complexidade.
+- Empresas com poucos colaboradores em frentes de cliente precisam de forte componente de automação/IA.
+- Para gerar o RESUMO EXECUTIVO ao prospect, traduza em linguagem acessível, focando nos ganhos de negócio (custo, retenção, expansão).`;
+            return prompt;
+        }
+
+        function submitDiagnostico() {
+            const nome = document.getElementById('ct-nome').value.trim();
+            const email = document.getElementById('ct-email').value.trim();
+            const telefone = document.getElementById('ct-telefone').value.trim();
+            const empresa = document.getElementById('ct-empresa').value.trim();
+
+            const errorMsg = document.getElementById('error-msg');
+            let valid = true;
+            [['ct-nome', nome], ['ct-email', email], ['ct-telefone', telefone], ['ct-empresa', empresa]].forEach(([id, val]) => {
+                const el = document.getElementById(id);
+                if (!val) { el.classList.add('error'); valid = false; }
+                else { el.classList.remove('error'); }
+            });
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) {
+                document.getElementById('ct-email').classList.add('error');
+                valid = false;
+            }
+
+            // Validação de telefone: extrai dígitos, valida quantidade e rejeita repetição
+            const telDigitos = telefone.replace(/\D/g, '');
+            let telInvalido = false;
+            if (telefone) {
+                // Precisa ter 10 (fixo) ou 11 (celular) dígitos — aceita com DDI 55 também (12-13)
+                const qtd = telDigitos.length;
+                const qtdOk = (qtd === 10 || qtd === 11 || qtd === 12 || qtd === 13);
+                // Rejeita todos os dígitos iguais (ex: 44444444444)
+                const todosIguais = /^(\d)\1+$/.test(telDigitos);
+                if (!qtdOk || todosIguais) {
+                    telInvalido = true;
+                    document.getElementById('ct-telefone').classList.add('error');
+                    valid = false;
+                }
+            }
+
+            if (!valid) {
+                if (telInvalido) {
+                    errorMsg.innerHTML = '<i class="ph ph-warning"></i> Verifique o telefone informado. Use um número válido com DDD, ex: (44) 99999-9999.';
+                } else {
+                    errorMsg.innerHTML = '<i class="ph ph-warning"></i> Por favor, preencha os campos obrigatórios (nome, e-mail, telefone e empresa).';
+                }
+                errorMsg.classList.add('show');
+                return;
+            }
+            errorMsg.classList.remove('show');
+
+            // Montar prompt e preencher form oculto
+            document.getElementById('basin-prompt').value = buildPrompt();
+            document.getElementById('basin-empresa').value = empresa;
+            document.getElementById('basin-nome').value = nome;
+            document.getElementById('basin-email').value = email;
+            document.getElementById('basin-telefone').value = telefone;
+            document.getElementById('basin-cargo').value = document.getElementById('ct-cargo').value;
+            document.getElementById('basin-linkedin').value = document.getElementById('ct-linkedin').value;
+            document.getElementById('basin-atuacao').value = document.getElementById('ct-atuacao').value;
+            document.getElementById('basin-base').value = document.getElementById('ct-base').value;
+            document.getElementById('basin-colab').value = document.getElementById('ct-colab').value;
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ph ph-spinner"></i> Enviando...';
+
+            // Enviar para Basin via fetch
+            const form = document.getElementById('basin-form');
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('main-form').classList.add('hidden');
+                    document.getElementById('thank-you').classList.add('active');
+                    window.scrollTo(0, 0);
+                } else {
+                    throw new Error('Erro no envio');
+                }
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="ph ph-paper-plane-tilt"></i> Enviar Diagnóstico';
+                errorMsg.innerHTML = '<i class="ph ph-warning"></i> Ocorreu um erro no envio. Tente novamente em instantes.';
+                errorMsg.classList.add('show');
+            });
+        }
+    </script>
+</body>
+</html>
