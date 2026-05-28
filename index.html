@@ -182,6 +182,28 @@
         .obs-mini::placeholder { color: var(--text-muted); opacity: 0.5; }
 
         /* SEÇÃO DE CONTATO */
+        /* SEÇÃO DE CONTEXTO DA EMPRESA */
+        .context-section {
+            background: var(--bg-card); border-radius: 12px; padding: 24px 28px;
+            margin-bottom: 28px; border: 1px solid var(--border-color);
+            border-top: 4px solid var(--accent-cyan);
+        }
+        .context-section h2 {
+            font-size: 18px; margin-bottom: 6px; color: var(--accent-cyan);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .context-section .context-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+        .context-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .context-grid .full-width { grid-column: 1 / -1; }
+        .form-group textarea {
+            width: 100%; padding: 10px 12px; background: var(--bg-dark);
+            border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main);
+            font-size: 14px; font-family: inherit; resize: vertical; min-height: 70px; line-height: 1.5;
+        }
+        .form-group textarea:focus { outline: none; border-color: var(--accent-cyan); }
+        .form-group textarea.error { border-color: var(--danger); }
+        .form-group textarea::placeholder { color: var(--text-muted); opacity: 0.6; }
+
         .contact-section {
             background: var(--bg-card); border-radius: 12px; padding: 28px;
             margin-bottom: 28px; border: 1px solid var(--border-color);
@@ -213,6 +235,66 @@
         }
         .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-green); }
         .form-group input.error { border-color: var(--danger); }
+
+        /* Radio buttons (Atuação) — estilo pílulas horizontais */
+        .radio-group {
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .radio-group.error .radio-option { border-color: var(--danger); }
+        .radio-option {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 14px; background: var(--bg-dark);
+            border: 1px solid var(--border-color); border-radius: 999px;
+            cursor: pointer; transition: all 0.15s ease;
+            font-size: 13px; color: var(--text-main); margin: 0;
+            text-transform: none; letter-spacing: 0; font-weight: 500;
+            user-select: none; -webkit-user-select: none; -moz-user-select: none;
+            white-space: nowrap;
+            caret-color: transparent;
+            outline: none;
+        }
+        .radio-option:focus, .radio-option:focus-within { outline: none; }
+        .radio-option span {
+            user-select: none; -webkit-user-select: none; -moz-user-select: none;
+            pointer-events: none; caret-color: transparent;
+        }
+        .radio-option input[type="radio"]:focus { outline: none; }
+        .radio-option:hover { border-color: var(--accent-green); color: var(--accent-green); }
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+        .radio-option::before {
+            content: "";
+            display: inline-block;
+            width: 14px; height: 14px;
+            min-width: 14px; min-height: 14px;
+            border-radius: 50%;
+            border: 1.5px solid var(--text-muted);
+            background: transparent;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            transition: all 0.15s ease;
+        }
+        .radio-option:has(input:checked) {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-green);
+        }
+        .radio-option:has(input:checked)::before {
+            border-color: var(--accent-green);
+            background: var(--accent-green);
+            box-shadow: inset 0 0 0 2.5px var(--bg-dark);
+        }
+        .atuacao-outro-input { margin-top: 10px; }
+        .atuacao-outro-input input { width: 100%; padding: 10px 12px; background: var(--bg-dark);
+            border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main);
+            font-size: 14px; font-family: inherit; }
+        .atuacao-outro-input input:focus { outline: none; border-color: var(--accent-green); }
+        .atuacao-outro-input input.error { border-color: var(--danger); }
+        .radio-helper {
+            font-size: 11px; color: var(--text-muted); margin-top: 6px;
+            font-style: italic; text-transform: none; letter-spacing: 0;
+        }
 
         .actions {
             display: flex; flex-direction: column; gap: 12px; align-items: center;
@@ -287,6 +369,8 @@
             .question-mini-num { width: 24px; height: 24px; }
 
             /* Contato */
+            .context-section { padding: 18px 16px; }
+            .context-grid { grid-template-columns: 1fr; gap: 14px; }
             .contact-section { padding: 18px 16px; }
             .contact-grid { gap: 24px; }
 
@@ -317,7 +401,7 @@
             <!-- LINHA DE VALOR (sempre visível) -->
             <div class="value-line">
                 <i class="ph ph-clock"></i>
-                <span>Tempo aproximado: <strong>~8 minutos</strong>.</span>
+                <span>Tempo aproximado: <strong>~10 minutos</strong>.</span>
             </div>
 
             <!-- COMO FUNCIONA (colapsável) -->
@@ -342,16 +426,50 @@
                 </div>
             </details>
 
-            <!-- AVISO DE DESATIVAÇÃO DE ÁREA -->
-            <div class="toggle-hint">
-                <i class="ph ph-info"></i>
-                <span>Sua empresa não trabalha com alguma dessas áreas? Use o botão <span class="toggle-demo"><span class="toggle-demo-slider"></span></span> no canto direito de cada bloco para <strong>desativá-la</strong>.</span>
+            <!-- BLOCO DE CONTEXTO DA EMPRESA -->
+            <div class="context-section">
+                <h2><i class="ph ph-target"></i> Contexto da empresa</h2>
+                <p class="context-sub">Antes de avaliar a maturidade das áreas, gostaríamos de entender o momento atual da sua operação. Essas respostas tornam a análise muito mais personalizada.</p>
+
+                <div class="context-grid">
+                    <div class="form-group full-width">
+                        <label>Qual o principal desafio da sua empresa com os clientes hoje? <span class="req">*</span></label>
+                        <textarea id="ctx-desafio" rows="3" placeholder="Ex: estamos perdendo clientes e não sabemos o motivo / o suporte está sobrecarregado / a receita está estagnada na base atual..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Faturamento anual aproximado</label>
+                        <select id="ctx-faturamento">
+                            <option value="">Selecione...</option>
+                            <option value="Até R$ 500 mil/ano">Até R$ 500 mil/ano</option>
+                            <option value="R$ 500 mil – R$ 2 milhões/ano">R$ 500 mil – R$ 2 milhões/ano</option>
+                            <option value="R$ 2 milhões – R$ 10 milhões/ano">R$ 2 milhões – R$ 10 milhões/ano</option>
+                            <option value="R$ 10 milhões – R$ 50 milhões/ano">R$ 10 milhões – R$ 50 milhões/ano</option>
+                            <option value="Acima de R$ 50 milhões/ano">Acima de R$ 50 milhões/ano</option>
+                            <option value="Prefiro não informar">Prefiro não informar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Prioridade de criar ou reestruturar essas áreas <span class="req">*</span></label>
+                        <select id="ctx-prioridade" required>
+                            <option value="">Selecione...</option>
+                            <option value="Alta — é uma prioridade clara agora">Alta — é uma prioridade clara agora</option>
+                            <option value="Média — está no radar, mas não é urgente">Média — está no radar, mas não é urgente</option>
+                            <option value="Explorando — ainda avaliando o momento certo">Explorando — ainda avaliando o momento certo</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <!-- TÍTULO DOS PILARES -->
             <div class="pillars-title">
                 <i class="ph ph-clipboard-text"></i>
                 <span>Pilares de Avaliação</span>
+            </div>
+
+            <!-- AVISO DE DESATIVAÇÃO DE ÁREA (movido para perto dos pilares) -->
+            <div class="toggle-hint">
+                <i class="ph ph-info"></i>
+                <span>Sua empresa não trabalha com algum dos pilares abaixo? Use o botão <span class="toggle-demo"><span class="toggle-demo-slider"></span></span> no canto direito de cada bloco para <strong>desativá-lo</strong>.</span>
             </div>
 
             <!-- GRID 2x2 -->
@@ -958,12 +1076,25 @@
                             <input type="text" id="ct-empresa" required>
                         </div>
                         <div class="form-group">
-                            <label>Atuação</label>
-                            <select id="ct-atuacao">
-                                <option value="">Selecione...</option>
-                                <option value="TI / Software">TI / Software</option>
-                                <option value="Não Digital (serviços)">Não Digital (serviços)</option>
-                            </select>
+                            <label>Atuação <span class="req">*</span></label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="ct-atuacao" value="TI / Software" id="atuacao-ti">
+                                    <span>TI / Software</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="ct-atuacao" value="Não Digital (serviços, contabilidade, advocacia, varejo)" id="atuacao-nao-digital">
+                                    <span>Não Digital</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="ct-atuacao" value="Outro" id="atuacao-outro" onchange="toggleOutroAtuacao()">
+                                    <span>Outro</span>
+                                </label>
+                            </div>
+                            <div class="radio-helper">Não Digital: serviços, contabilidade, advocacia, varejo, etc.</div>
+                            <div id="atuacao-outro-wrapper" class="atuacao-outro-input" style="display:none;">
+                                <input type="text" id="ct-atuacao-outro" placeholder="Qual o segmento de atuação?">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Base de clientes (quantidade)</label>
@@ -1008,6 +1139,9 @@
         <input type="hidden" name="atuacao" id="basin-atuacao">
         <input type="hidden" name="base_clientes" id="basin-base">
         <input type="hidden" name="colaboradores" id="basin-colab">
+        <input type="hidden" name="desafio_principal" id="basin-desafio">
+        <input type="hidden" name="faturamento" id="basin-faturamento">
+        <input type="hidden" name="prioridade" id="basin-prioridade">
         <input type="hidden" name="prompt_analise" id="basin-prompt">
     </form>
 
@@ -1021,6 +1155,26 @@
         }
         ajustarColapsaveis();
         window.addEventListener('resize', ajustarColapsaveis);
+
+        // Controla a exibição do campo "Qual?" quando "Outro" é selecionado em Atuação
+        function toggleOutroAtuacao() {
+            const outroRadio = document.getElementById('atuacao-outro');
+            const wrapper = document.getElementById('atuacao-outro-wrapper');
+            const tiRadio = document.getElementById('atuacao-ti');
+            const naoDigRadio = document.getElementById('atuacao-nao-digital');
+            if (outroRadio.checked) {
+                wrapper.style.display = 'block';
+                document.getElementById('ct-atuacao-outro').focus();
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+        // Garante que ao clicar em TI ou Não Digital, o campo "Outro" some
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'ct-atuacao') {
+                toggleOutroAtuacao();
+            }
+        });
 
         const areaStates = { cx: true, suporte: true, cs: true, servicos: true };
         const areasData = [
@@ -1084,26 +1238,48 @@
             const empresa = document.getElementById('ct-empresa').value || '[NÃO PREENCHIDO]';
             const nome = document.getElementById('ct-nome').value || '[NÃO PREENCHIDO]';
             const cargo = document.getElementById('ct-cargo').value || '[NÃO PREENCHIDO]';
-            const atuacao = document.getElementById('ct-atuacao').value || '[NÃO PREENCHIDO]';
+            // Atuação: ler radio button selecionado + caso "Outro", concatenar o texto livre
+            let atuacao = '[NÃO PREENCHIDO]';
+            const atuacaoRadio = document.querySelector('input[name="ct-atuacao"]:checked');
+            if (atuacaoRadio) {
+                if (atuacaoRadio.value === 'Outro') {
+                    const outroTexto = document.getElementById('ct-atuacao-outro').value.trim();
+                    atuacao = outroTexto ? `Outro — ${outroTexto}` : 'Outro';
+                } else {
+                    atuacao = atuacaoRadio.value;
+                }
+            }
             const base = document.getElementById('ct-base').value || '[NÃO PREENCHIDO]';
             const colab = document.getElementById('ct-colab').value || '[NÃO PREENCHIDO]';
+
+            // Novo: contexto de negócio
+            const ctxDesafio = document.getElementById('ctx-desafio').value.trim() || '[NÃO INFORMADO]';
+            const ctxFaturamento = document.getElementById('ctx-faturamento').value || '[NÃO INFORMADO]';
+            const ctxPrioridade = document.getElementById('ctx-prioridade').value || '[NÃO INFORMADO]';
 
             const scaleLabels = {1: 'Inexistente', 2: 'Informal', 3: 'Básico', 4: 'Estruturado', 5: 'Otimizado'};
 
             let prompt = `DIAGNÓSTICO DE MATURIDADE — ${empresa}
 
-=== CONTEXTO ===
+=== CONTEXTO DA EMPRESA ===
 Empresa: ${empresa}
 Respondente: ${nome} (${cargo})
 Atuação: ${atuacao}
 Base de clientes: ${base}
 Colaboradores que atuam com clientes: ${colab}
 
+=== CONTEXTO DE NEGÓCIO (informado pelo respondente) ===
+Principal desafio com os clientes hoje:
+${ctxDesafio}
+
+Faturamento anual aproximado: ${ctxFaturamento}
+Prioridade de criar ou reestruturar essas áreas: ${ctxPrioridade}
+
 === ÁREAS AVALIADAS ===
-${areaStates.cx ? '☑' : '☐'} Experiência do Cliente (CX)${areaStates.cx ? '' : ' (área desmarcada)'}
-${areaStates.suporte ? '☑' : '☐'} Suporte / Atendimento${areaStates.suporte ? '' : ' (área desmarcada)'}
-${areaStates.cs ? '☑' : '☐'} Sucesso do Cliente (CS)${areaStates.cs ? '' : ' (área desmarcada)'}
-${areaStates.servicos ? '☑' : '☐'} Serviços Técnicos${areaStates.servicos ? '' : ' (área desmarcada)'}
+${areaStates.cx ? '☑' : '☐'} Experiência do Cliente (CX)${areaStates.cx ? '' : ' (área desmarcada — não se aplica ao negócio)'}
+${areaStates.suporte ? '☑' : '☐'} Suporte / Atendimento${areaStates.suporte ? '' : ' (área desmarcada — não se aplica ao negócio)'}
+${areaStates.cs ? '☑' : '☐'} Sucesso do Cliente (CS)${areaStates.cs ? '' : ' (área desmarcada — não se aplica ao negócio)'}
+${areaStates.servicos ? '☑' : '☐'} Serviços Técnicos${areaStates.servicos ? '' : ' (área desmarcada — não se aplica ao negócio)'}
 
 === RESPOSTAS DETALHADAS ===
 
@@ -1132,27 +1308,64 @@ ${areaStates.servicos ? '☑' : '☐'} Serviços Técnicos${areaStates.servicos 
                     }
                     prompt += '\n';
                 } else {
-                    prompt += `--- ${areaNames[area.key]} ---\n(Área desmarcada)\n\n`;
+                    prompt += `--- ${areaNames[area.key]} ---\n(Área desmarcada — não se aplica ao negócio)\n\n`;
                 }
             });
 
             prompt += `=== INSTRUÇÕES PARA ANÁLISE ===
-Você é um consultor sênior em CX, CS e Serviços Técnicos. Com base no diagnóstico acima:
 
-1. SCORE DE MATURIDADE POR ÁREA: calcule a média de cada área ativada e classifique o nível geral.
-2. LACUNAS CRÍTICAS PRIORIZADAS: identifique as 3 maiores lacunas, priorizadas por impacto em redução de custo, retenção (churn) e expansão de receita.
-3. AÇÕES PRIORITÁRIAS: liste de 5 a 8 ações concretas em ordem de prioridade, indicando área, interesse principal (CUSTO ou RECEITA), complexidade (Baixa/Média/Alta) e tempo estimado (semanas).
-4. ESTIMATIVA DE IMPACTO POTENCIAL: estime de forma qualitativa (faixas indicativas) o potencial de redução de custo, redução de churn e aumento de receita.
-5. ESCOPO DE PROJETO SUGERIDO: 90 dias em 3 fases (Diagnóstico/Alinhamento semanas 1-2; Estruturação semanas 3-6; Implementação semanas 7-12), com entregas-chave e horas estimadas por fase.
-6. RISCOS E PREMISSAS: 3-5 riscos e premissas.
-7. INVESTIMENTO APROXIMADO: faixa considerando R$ 300/hora, total de horas e modelo de cobrança (projeto fechado vs horas mensais).
+Você é um consultor sênior em CX, CS, Suporte e Serviços Técnicos. Sua tarefa tem duas partes:
 
-IMPORTANTE:
-- Análise para uso interno do consultor — pode ser técnica e direta.
-- Foco nas DECISÕES que o consultor precisa tomar.
-- Considere o porte (colaboradores e base) para calibrar complexidade.
-- Empresas com poucos colaboradores em frentes de cliente precisam de forte componente de automação/IA.
-- Para gerar o RESUMO EXECUTIVO ao prospect, traduza em linguagem acessível, focando nos ganhos de negócio (custo, retenção, expansão).`;
+PARTE 1 — ANÁLISE TÉCNICA (uso interno do consultor)
+Faça uma análise técnica e direta, contendo:
+
+1. SCORE DE MATURIDADE POR ÁREA: calcule a média de cada área ATIVADA (ignore áreas desmarcadas) e classifique o nível geral (Inicial, Informal, Básico, Estruturado ou Otimizado).
+
+2. LEITURA CRUZADA DE CONTEXTO + MATURIDADE: cruze o "principal desafio" declarado, o porte (faturamento e colaboradores) e a prioridade com os scores de maturidade. A dor declarada deve ser o FIO CONDUTOR da análise — não apenas mais um dado. Identifique se o que o respondente declarou como dor é confirmado, intensificado ou contradito pelos scores.
+
+3. LACUNAS CRÍTICAS PRIORIZADAS: identifique as 3 maiores lacunas, priorizadas por impacto em redução de custo, retenção (churn) e expansão de receita — com foco no que mais conecta com a dor declarada.
+
+4. AÇÕES PRIORITÁRIAS: liste de 5 a 8 ações concretas em ordem de prioridade, indicando área, interesse principal (CUSTO ou RECEITA), complexidade (Baixa/Média/Alta) e tempo estimado (semanas). Calibre a complexidade conforme o porte da empresa.
+
+5. ESTIMATIVA DE IMPACTO POTENCIAL: estime faixas indicativas para redução de custo, redução de churn e aumento de receita. Use o faturamento informado como âncora quando disponível.
+
+6. ESCOPO DE PROJETO SUGERIDO: 90 dias em 3 fases (Diagnóstico/Alinhamento semanas 1-2; Estruturação semanas 3-6; Implementação semanas 7-12), com entregas-chave e horas estimadas por fase. Ajuste o escopo conforme porte e prioridade declarada.
+
+7. RISCOS E PREMISSAS: 3-5 riscos e premissas.
+
+8. INVESTIMENTO APROXIMADO: faixa considerando R$ 300/hora, total de horas e modelo de cobrança (projeto fechado vs horas mensais).
+
+PARTE 2 — RESUMO EXECUTIVO (para devolver ao prospect)
+Esta parte é o documento que será entregue ao prospect. Deve:
+
+A. Abrir conectando diretamente com a DOR DECLARADA — o respondente precisa sentir que foi escutado. Use as palavras dele quando possível, sem reformular demais.
+B. Mostrar o panorama geral com tom adequado à prioridade declarada (alta → mais urgente; explorando → mais consultivo e exploratório).
+C. Apresentar 4-5 achados principais conectados à dor.
+D. Listar 4 ações prioritárias (sem detalhar implementação — esse é o produto da consultoria).
+E. Estimar impacto potencial em linguagem de negócio (não técnica). Use faixas qualitativas (Alta/Média) ou percentuais quando o porte permitir.
+F. Fechar com CTA para reunião de 30 min, conectando explicitamente com a dor inicial.
+
+DIRETRIZES IMPORTANTES PARA O RESUMO EXECUTIVO:
+- Linguagem de NEGÓCIO, não técnica (custo, retenção, receita — não NPS, RAG, FCR).
+- NUNCA julgue o porte do respondente como "fora do ICP". Independente do tamanho, trate-o com respeito e enxergue o valor no momento dele.
+- Para empresas em estágio inicial (poucos clientes/colaboradores): foque em "construir fundamentos que escalam", não em "automação pesada".
+- Para empresas consolidadas (maior porte): foque em "destravar valor já presente na base" — retenção, expansão e eficiência.
+- Se a prioridade for "Explorando", o tom deve ser CONSULTIVO (não vendedor).
+- Se a prioridade for "Alta", o tom deve transmitir URGÊNCIA e capacidade de execução.
+- Se a dor declarada é específica (ex: "estamos perdendo clientes sem saber motivo"), AMARRE TODA a análise nela.
+- Não use jargão internacional sem explicar (NPS, churn, RAG, CES — sempre traduza ou contextualize).
+- NUNCA invente números. Use faixas indicativas e deixe claro que são estimativas a validar.
+
+ADAPTAÇÃO DE LINGUAGEM POR ATUAÇÃO:
+- Se ATUAÇÃO for "TI / Software": pode usar termos técnicos do setor (RAG, IA agêntica, automação de atendimento, SaaS, MRR/ARR, base SaaS, plataforma), mas sempre contextualizando o IMPACTO no negócio. O leitor entende esses conceitos.
+- Se ATUAÇÃO for "Não Digital" (serviços, contabilidade, advocacia, varejo, etc.): EVITE COMPLETAMENTE jargão técnico de tecnologia. Use linguagem de gestão e relacionamento humano. Em vez de "automação com IA", diga "uso de ferramentas para liberar a equipe do operacional repetitivo". Em vez de "health score", diga "indicadores de saúde do cliente". Em vez de "RAG/IA agêntica", não cite — fale em "ferramentas de apoio". Foque em pessoas, processos e relacionamento.
+- Se ATUAÇÃO for "Outro — [segmento informado]": adapte a linguagem ao segmento informado. Se for setor técnico (engenharia, indústria), pode usar termos do setor. Se for setor humano (educação, saúde), foque em pessoas e processos. Sempre traduza qualquer jargão.
+- Em TODOS os casos: o resumo executivo deve falar com o decisor (CEO, sócio, diretor) — não com o time técnico. Use a linguagem de quem decide investimento, não de quem executa.
+
+IMPORTANTE — separação:
+- A PARTE 1 (análise técnica) é só para o consultor. NÃO incluir no documento entregue ao prospect.
+- A PARTE 2 (resumo executivo) é o que vai virar o documento HTML/PDF entregue ao prospect.
+- Entregue as duas partes claramente separadas e identificadas na resposta.`;
             return prompt;
         }
 
@@ -1162,13 +1375,47 @@ IMPORTANTE:
             const telefone = document.getElementById('ct-telefone').value.trim();
             const empresa = document.getElementById('ct-empresa').value.trim();
 
+            // Novos campos obrigatórios do bloco de contexto
+            const ctxDesafio = document.getElementById('ctx-desafio').value.trim();
+            const ctxPrioridade = document.getElementById('ctx-prioridade').value;
+
             const errorMsg = document.getElementById('error-msg');
             let valid = true;
+            let contextoInvalido = false;
+
             [['ct-nome', nome], ['ct-email', email], ['ct-telefone', telefone], ['ct-empresa', empresa]].forEach(([id, val]) => {
                 const el = document.getElementById(id);
                 if (!val) { el.classList.add('error'); valid = false; }
                 else { el.classList.remove('error'); }
             });
+
+            // Validar campos obrigatórios do bloco de contexto
+            const elDesafio = document.getElementById('ctx-desafio');
+            const elPrioridade = document.getElementById('ctx-prioridade');
+            if (!ctxDesafio) { elDesafio.classList.add('error'); valid = false; contextoInvalido = true; }
+            else { elDesafio.classList.remove('error'); }
+            if (!ctxPrioridade) { elPrioridade.classList.add('error'); valid = false; contextoInvalido = true; }
+            else { elPrioridade.classList.remove('error'); }
+
+            // Validar Atuação (radio obrigatório + texto "Qual?" obrigatório se "Outro")
+            const atuacaoRadioValid = document.querySelector('input[name="ct-atuacao"]:checked');
+            const radioGroupContainer = document.querySelector('.radio-group');
+            const elAtuacaoOutroInput = document.getElementById('ct-atuacao-outro');
+            let atuacaoInvalida = false;
+            if (!atuacaoRadioValid) {
+                radioGroupContainer.classList.add('error');
+                valid = false;
+                atuacaoInvalida = true;
+            } else {
+                radioGroupContainer.classList.remove('error');
+                if (atuacaoRadioValid.value === 'Outro' && !elAtuacaoOutroInput.value.trim()) {
+                    elAtuacaoOutroInput.classList.add('error');
+                    valid = false;
+                    atuacaoInvalida = true;
+                } else {
+                    elAtuacaoOutroInput.classList.remove('error');
+                }
+            }
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (email && !emailRegex.test(email)) {
@@ -1180,10 +1427,8 @@ IMPORTANTE:
             const telDigitos = telefone.replace(/\D/g, '');
             let telInvalido = false;
             if (telefone) {
-                // Precisa ter 10 (fixo) ou 11 (celular) dígitos — aceita com DDI 55 também (12-13)
                 const qtd = telDigitos.length;
                 const qtdOk = (qtd === 10 || qtd === 11 || qtd === 12 || qtd === 13);
-                // Rejeita todos os dígitos iguais (ex: 44444444444)
                 const todosIguais = /^(\d)\1+$/.test(telDigitos);
                 if (!qtdOk || todosIguais) {
                     telInvalido = true;
@@ -1195,6 +1440,10 @@ IMPORTANTE:
             if (!valid) {
                 if (telInvalido) {
                     errorMsg.innerHTML = '<i class="ph ph-warning"></i> Verifique o telefone informado. Use um número válido com DDD, ex: (44) 99999-9999.';
+                } else if (contextoInvalido) {
+                    errorMsg.innerHTML = '<i class="ph ph-warning"></i> Por favor, preencha o principal desafio e a prioridade na seção de Contexto da empresa.';
+                } else if (atuacaoInvalida) {
+                    errorMsg.innerHTML = '<i class="ph ph-warning"></i> Por favor, selecione a Atuação da empresa.';
                 } else {
                     errorMsg.innerHTML = '<i class="ph ph-warning"></i> Por favor, preencha os campos obrigatórios (nome, e-mail, telefone e empresa).';
                 }
@@ -1211,9 +1460,25 @@ IMPORTANTE:
             document.getElementById('basin-telefone').value = telefone;
             document.getElementById('basin-cargo').value = document.getElementById('ct-cargo').value;
             document.getElementById('basin-linkedin').value = document.getElementById('ct-linkedin').value;
-            document.getElementById('basin-atuacao').value = document.getElementById('ct-atuacao').value;
+            // Atuação (do radio + texto livre se Outro)
+            const atuacaoRadioSubmit = document.querySelector('input[name="ct-atuacao"]:checked');
+            let atuacaoValor = '';
+            if (atuacaoRadioSubmit) {
+                if (atuacaoRadioSubmit.value === 'Outro') {
+                    const outroTxt = document.getElementById('ct-atuacao-outro').value.trim();
+                    atuacaoValor = outroTxt ? `Outro — ${outroTxt}` : 'Outro';
+                } else {
+                    atuacaoValor = atuacaoRadioSubmit.value;
+                }
+            }
+            document.getElementById('basin-atuacao').value = atuacaoValor;
             document.getElementById('basin-base').value = document.getElementById('ct-base').value;
             document.getElementById('basin-colab').value = document.getElementById('ct-colab').value;
+
+            // Novos campos de contexto enviados ao Basin
+            document.getElementById('basin-desafio').value = ctxDesafio;
+            document.getElementById('basin-faturamento').value = document.getElementById('ctx-faturamento').value;
+            document.getElementById('basin-prioridade').value = ctxPrioridade;
 
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
